@@ -26,6 +26,8 @@ prompt=PromptTemplate(
     if a matching definition or explanation is present, use it to answer.
     If the information is genuinely not present in the context, say "I don't know based on the provided document."
     Do not use any outside knowledge beyond what's in the context.
+    You may apply simple arithmetic or rules stated in the context (such as per-year rates,
+    minimums, or caps) to compute an answer for the specific case in the question.
     
     Context:
     {context}
