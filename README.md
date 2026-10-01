@@ -3,9 +3,12 @@
 Upload any PDF and ask questions about it in plain English. DocMind retrieves the most relevant passages using **hybrid search (BM25 keyword search + vector embeddings)** and generates answers grounded only in your document.
 
 **Live demo:** https://respectful-nourishment-production-bb60.up.railway.app/
+
 **API docs:** https://docmind-rag-production-d5e8.up.railway.app/docs
 
 <!-- Add a screenshot or GIF here -->
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cff9d936-ec8f-4f85-b7cc-ecb3147083cb" />
+
 <!-- ![DocMind demo](assets/demo.gif) -->
 
 ---
