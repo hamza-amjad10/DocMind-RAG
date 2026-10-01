@@ -4,6 +4,8 @@ import requests
 
 st.header("DocMind QA Web App")
 
+BACKEND_URL = "https://docmind-rag-production-d5e8.up.railway.app"
+
 if "uploaded" not in st.session_state:
     st.session_state.uploaded=False
 
@@ -15,7 +17,7 @@ if not st.session_state.uploaded:
     if file is not None:
         if st.button("Upload"):
                 file_data={"file":(file.name,file.getvalue(),"application/pdf")}
-                response=requests.post("http://127.0.0.1:8000/upload",files=file_data)
+                response=requests.post(f"{BACKEND_URL}/upload",files=file_data)
                 
                 if response.status_code==200:
                     st.session_state.uploaded=True
@@ -45,7 +47,7 @@ if st.session_state.uploaded:
             st.write(question)
             st.session_state.messages.append({"role":"user","content":question})
         with st.chat_message("assistant"):
-            response=requests.post("http://127.0.0.1:8000/ask",json={"question":question})
+            response=requests.post(f"{BACKEND_URL}/ask",json={"question":question})
             answer=response.json()["answer"]
             st.write(answer)
             st.session_state.messages.append({"role":"assistant","content":answer})
