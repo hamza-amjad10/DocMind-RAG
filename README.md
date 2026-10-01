@@ -7,7 +7,9 @@ Upload any PDF and ask questions about it in plain English. DocMind retrieves th
 **API docs:** https://docmind-rag-production-d5e8.up.railway.app/docs
 
 <!-- Add a screenshot or GIF here -->
+**1. Upload a PDF**
 <img width="1891" height="937" alt="Screenshot (1419)" src="https://github.com/user-attachments/assets/87a48f0d-eef8-4403-b21e-fa6de0db4cc6" />
+**2. Ask a question**
 <img width="1900" height="921" alt="Screenshot (1421)" src="https://github.com/user-attachments/assets/a50bba57-3eda-40a8-b72e-61e45847416f" />
 <img width="1882" height="943" alt="Screenshot (1422)" src="https://github.com/user-attachments/assets/462cb69f-d250-4ca3-b61e-c06761df38d9" />
 
