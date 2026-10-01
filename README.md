@@ -74,7 +74,6 @@ flowchart LR
 
 ```bash
 git clone https://github.com/hamza-amjad10/DocMind-RAG.git
-cd DocMind-RAG
 
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
