@@ -55,9 +55,13 @@ def ingest_pdf(file_path: str):
     )
     
     chunks = splitter.create_documents([full_text])
-    
-    old_store = Chroma(embedding_function=embedding_model, persist_directory="chroma_db")
-    old_store.delete_collection()
+
+    try:
+        old_store= Chroma(embedding_function=embedding_model, persist_directory="chroma_db")
+        old_store.delete_collection()
+    except Exception:
+        pass
+   
     
     with open("chunks.pkl", "wb") as f:
         pickle.dump(chunks, f)
