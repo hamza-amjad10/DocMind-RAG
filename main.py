@@ -26,6 +26,9 @@ def upload_file(file: UploadFile=File(...)):
 
 @app.post('/ask')
 def ask_query(data: Query):
-    answer=ask_question(data.question)
+    try:
+        answer = ask_question(data.question)
+    except FileNotFoundError:
+        answer = "Please upload a PDF first."
     return {"answer":answer}
     
