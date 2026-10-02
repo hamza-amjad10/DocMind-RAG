@@ -23,7 +23,7 @@ def preprocess(text):
 embedding_model=HuggingFaceEndpointEmbeddings( model="BAAI/bge-small-en-v1.5")
 
 # generation model
-model=ChatGroq(model="openai/gpt-oss-20b,temperature=0")
+model=ChatGroq(model="openai/gpt-oss-20b",temperature=0)
 
 # prompt
 prompt=PromptTemplate(
