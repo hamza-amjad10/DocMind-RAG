@@ -115,13 +115,6 @@ streamlit run frontend.py
 - **Ephemeral storage:** indexes are stored on the container's disk and are lost on restart or redeploy, so the PDF needs to be re-uploaded afterwards.
 - **Text-only PDFs:** scanned PDFs (images) are not supported because there is no OCR step.
 
-## Roadmap
-
-- [ ] Per-session document indexes (multi-user support)
-- [ ] Show source chunks / page numbers with each answer
-- [ ] Support multiple documents
-- [ ] OCR for scanned PDFs
-- [ ] Retrieval evaluation (accuracy on a labelled question set)
 
 ## Author
 
