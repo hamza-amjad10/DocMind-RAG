@@ -1,6 +1,6 @@
 # DocMind: PDF Question Answering with Hybrid RAG
 
-Upload any PDF and ask questions about it in plain English. DocMind retrieves the most relevant passages using **hybrid search (BM25 keyword search + vector embeddings)** and generates answers grounded only in your document.
+Upload any PDF and ask questions about it in plain English. DocMind retrieves the most relevant passages using hybrid search (BM25 keyword search + vector embeddings) and generates answers grounded only in your document, with page-number citations.
 
 **Live demo:** https://respectful-nourishment-production-bb60.up.railway.app/
 
@@ -26,6 +26,9 @@ Upload any PDF and ask questions about it in plain English. DocMind retrieves th
 - **Hybrid retrieval:** combines semantic (vector) search and keyword (BM25) search with a 50/50 ensemble, so it handles both paraphrased and exact-term questions
 - **Grounded answers:** the prompt restricts the LLM to the retrieved context and returns "I don't know based on the provided document." when the answer isn't there
 - **Decoupled architecture:** FastAPI backend and Streamlit frontend deployed as separate services on Railway
+- **Per-session isolation:** every user gets their own session ID, with a separate vector index, BM25 index, and upload folder, so users never see or overwrite each other's documents
+- **Source citations:** each answer shows the page numbers it was drawn from (e.g. "Sources: Page 3, Page 5")
+- **Basic API hardening:** UUID validation on session IDs, fixed server-side file names (no user-controlled paths), and PDF-only uploads
 - Basic error handling and timeouts on the frontend
 
 ## Architecture
