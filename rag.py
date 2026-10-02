@@ -23,7 +23,7 @@ def preprocess(text):
 embedding_model=HuggingFaceEndpointEmbeddings( model="BAAI/bge-small-en-v1.5")
 
 # generation model
-model=ChatGroq(model="openai/gpt-oss-20b")
+model=ChatGroq(model="openai/gpt-oss-20b,temperature=0")
 
 # prompt
 prompt=PromptTemplate(
@@ -32,6 +32,8 @@ prompt=PromptTemplate(
     if a matching definition or explanation is present, use it to answer.
     If the information is genuinely not present in the context, say "I don't know based on the provided document."
     Do not use any outside knowledge beyond what's in the context.
+    Only include information that directly answers the question.
+    Do not combine details from unrelated sections of the context.
     
     Context:
     {context}
