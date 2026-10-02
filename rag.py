@@ -28,12 +28,11 @@ model=ChatGroq(model="openai/gpt-oss-20b",temperature=0)
 # prompt
 prompt=PromptTemplate(
     template=""" Answer the question using ONLY the information in the context below.
-    The context may describe the answer without repeating the exact term used in the question
-    if a matching definition or explanation is present, use it to answer.
-    If the information is genuinely not present in the context, say "I don't know based on the provided document."
-    Do not use any outside knowledge beyond what's in the context.
-    Only include information that directly answers the question.
-    Do not combine details from unrelated sections of the context.
+The context may describe the answer without repeating the exact term used in the question. If a matching definition or explanation is present, use it to answer.
+Only include information that directly answers the question.
+Do not combine details from unrelated sections of the context.
+Do not use any outside knowledge beyond what's in the context.
+If the information is genuinely not present in the context, say "I don't know based on the provided document.
     
     Context:
     {context}
@@ -115,7 +114,7 @@ def ask_question(query:str,session_id:str):
     
     result_docs = ensemble_retriever.invoke(query)
 
-    for doc in result_docs[:5]:
+    for doc in result_docs[:4]:
         docs.append(doc.page_content)
         sources.append(doc.metadata["page"] + 1)
 
