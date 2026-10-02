@@ -9,8 +9,14 @@ from langchain_groq import ChatGroq
 from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
 import pickle
+import os
+import re
 
 load_dotenv()
+
+
+def preprocess(text):
+    return re.findall(r"\w+", text.lower())
 
 
 # embedding model
@@ -26,8 +32,6 @@ prompt=PromptTemplate(
     if a matching definition or explanation is present, use it to answer.
     If the information is genuinely not present in the context, say "I don't know based on the provided document."
     Do not use any outside knowledge beyond what's in the context.
-    You may apply simple arithmetic or rules stated in the context (such as per-year rates,
-    minimums, or caps) to compute an answer for the specific case in the question.
     
     Context:
     {context}
@@ -42,13 +46,11 @@ prompt=PromptTemplate(
 parser = StrOutputParser()
 
 
-def ingest_pdf(file_path: str):
+def ingest_pdf(file_path: str,session_id: str):
     
     loader = PyPDFLoader(file_path)
     text = loader.load()
     
-    # All pages text combine to make single text
-    full_text = "\n\n".join([doc.page_content for doc in text if doc.page_content.strip()])
     
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -56,48 +58,50 @@ def ingest_pdf(file_path: str):
         separators=["\n\n", "\n●", "\n○", "\n", " ", ""]
     )
     
-    chunks = splitter.create_documents([full_text])
-
-    try:
-        old_store= Chroma(embedding_function=embedding_model, persist_directory="chroma_db")
-        old_store.delete_collection()
-    except Exception:
-        pass
-   
+    for doc in text:
+        t = re.sub(r"\s+", " ", doc.page_content)
+        t = re.sub(r"\s*([●○])\s*", r"\n\1 ", t)
+        doc.page_content = t.strip()
     
-    with open("chunks.pkl", "wb") as f:
+    chunks = splitter.split_documents(text)
+
+    
+    os.makedirs("chunks", exist_ok=True)
+    os.makedirs("bm25", exist_ok=True)
+    os.makedirs("chroma_db", exist_ok=True)
+ 
+    
+    with open(f"chunks/{session_id}.pkl", "wb") as f:
         pickle.dump(chunks, f)
     
     
-    bm_retriever=BM25Retriever.from_documents(
-        documents=chunks
-    )
+    bm_retriever = BM25Retriever.from_documents(documents=chunks, preprocess_func=preprocess)
     bm_retriever.k = 8
     
-    with open("bm25_retriever.pkl", "wb") as f:
+    with open(f"bm25/{session_id}.pkl", "wb") as f:
             pickle.dump(bm_retriever, f)
     
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embedding_model,
-        persist_directory="chroma_db"
+        persist_directory=f"chroma_db/{session_id}"
     )
-    
+
     return vectorstore
     
 
-
-def ask_question(query:str):
+def ask_question(query:str,session_id:str):
     
     docs=[]
+    sources=[]
     
-    with open("bm25_retriever.pkl", "rb") as f:
+    with open(f"bm25/{session_id}.pkl", "rb") as f:
         bm_retriever = pickle.load(f)
     
     
     vectorstore=Chroma(
         embedding_function=embedding_model,
-        persist_directory="chroma_db"
+        persist_directory=f"chroma_db/{session_id}"
     )
 
     vector_retriever =vectorstore.as_retriever(search_kwargs={"k": 8})
@@ -109,23 +113,27 @@ def ask_question(query:str):
     
     result_docs = ensemble_retriever.invoke(query)
 
-    for doc in result_docs:
+    for doc in result_docs[:5]:
         docs.append(doc.page_content)
-
+        sources.append(doc.metadata["page"] + 1)
 
     string_text="\n\n".join(docs)
+    sources = sorted(set(sources))
 
 
     chain=prompt|model|parser
 
     result=chain.invoke({"context":string_text,"query":query})
-    return result
-
+    return {
+    "answer": result,
+    "sources": sources
+    }
 
 
 if __name__ == "__main__":
     print("Starting ingestion...")
-    ingest_pdf("company_handbook.pdf")
+    session_id="test"
+    ingest_pdf("dl-curriculum.pdf",session_id)
     print("Ingestion done, asking question...")
-    answer = ask_question("Can I carry over unused annual leave?")
+    answer = ask_question("what is dropout?",session_id)
     print("Final answer:", answer)
