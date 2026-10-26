@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -20,7 +20,7 @@ def preprocess(text):
 
 
 # embedding model
-embedding_model=HuggingFaceEndpointEmbeddings( model="BAAI/bge-small-en-v1.5")
+embedding_model = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
 # generation model
 model=ChatGroq(model="openai/gpt-oss-20b",temperature=0)
